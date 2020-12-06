@@ -94,12 +94,34 @@ Your components can then be imported and used in that project.
 
 ## Publishing
 
+### Hosting via NPM
+
 First, make sure you have an NPM account and are [logged into NPM using the `npm login` command.](https://docs.npmjs.com/creating-a-new-npm-user-account)
 
 Then update the `name` field in `package.json` to reflect your NPM package name in your private or public NPM registry. Then run:
 
 ```
 npm publish
+```
+
+The `"prepublishOnly": "npm run build"` script in `package.json` will execute before publish occurs, ensuring the `build/` directory and the compiled component library exist.
+
+### Hosting via GitHub
+
+I recommend you host the component library using NPM. However, if you don't want to use NPM, you can use GitHub to host it instead.
+
+You'll need to remove `build/` from `.gitignore`, build the component library (`npm run build`), add, commit and push the contents of `build`. [See this branch for an example.](https://github.com/HarveyD/react-component-library/tree/host-via-github)
+
+You can then install your library into other projects by running:
+
+```
+npm i --save git+https://github.com/HarveyD/react-component-library.git#branch-name
+```
+
+OR
+
+```
+npm i --save github:harveyd/react-component-library#branch-name
 ```
 
 ## Usage
@@ -140,10 +162,67 @@ For example, let's say you installed `harvey-component-library` into your projec
 }
 ```
 
+## Additional Help
+
+### Using Alternatives to Sass
+
+#### Less or Stylus
+
+The Rollup plugin `rollup-plugin-postcss` supports Sass, Less and Stylus:
+
+- For Stylus, install stylus: `yarn add stylus --dev`
+- For Less, install less: `yarn add less --dev`
+
+You can then remove `node-sass` from your dependencies.
+
+#### CSS Modules
+
+If you want to use CSS Modules, update `postcss` in `rollup-config.js` to:
+
+```
+postcss({
+  modules: true
+})
+```
+
+#### Styled Components
+
+If you want to use [`styled-components`](https://styled-components.com/), the changes required are a bit more involved. As such, I've created a branch where I've got `styled-components` working in this component library, [check it out here](https://github.com/HarveyD/react-component-library/tree/styled-components).
+
 ### Can I code split my components?
 
 Yes you can.
 
 [Read this section of my blog post](https://blog.harveydelaney.com/creating-your-own-react-component-library/#introducing-code-splitting-optional-) to find out how.
 
-Or check out [this commit](https://github.com/HarveyD/react-component-library/commit/94631be5a871f3b39dbc3e9bd3e75a8ae5b3b759) to see what changes are neccesary to implement it.
+Atlernatively, you can check out [this branch](https://github.com/HarveyD/react-component-library/tree/code-splitting) or [this commit](https://github.com/HarveyD/react-component-library/commit/94631be5a871f3b39dbc3e9bd3e75a8ae5b3b759) to see what changes are neccesary to implement it.
+
+Please note, there's an issue with code splitting and using `rollup-plugin-postcss`. I recommend using `rollup-plugin-sass` instead for code splitting.
+
+### Supporting Images
+
+Add the following library to your component library [@rollup/plugin-image](https://github.com/rollup/plugins/tree/master/packages/image):
+
+```
+npm i -D @rollup/plugin-image
+```
+
+Then add it to `rollup-config.js`:
+
+```
+...
+plugins:[
+  ...,
+  image(),
+  ...
+]
+...
+```
+
+You can then import and render images in your components like:
+
+```tsx
+import logo from "./rollup.png";
+
+export const ImageComponent = () => <div>{logo}</div>;
+```

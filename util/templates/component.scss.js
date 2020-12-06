@@ -1,13 +1,13 @@
 module.exports = (componentName) => ({
-  content: `// Generated with util/create-component.js
+	content: `// Generated with util/create-component.js
 @import "../variables.scss";
 @import "../typography.scss";
 
-.foo-bar {
+.foo {
   @include font-defaults;
 
-  color: $harvey-green;
+  color: $wade-green;
 }
 `,
-  extension: `.scss`
-});
+	extension: `.scss`,
+})
